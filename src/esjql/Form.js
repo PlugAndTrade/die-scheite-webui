@@ -3,6 +3,25 @@ import { Button, Form, Select } from 'antd';
 import * as R from 'ramda';
 import { getValues } from './api';
 
+const flatten_form_values = (values) => {
+  return R.pipe(
+    R.toPairs,
+    R.map(([k, v]) => {
+      if (typeof v === 'object' && !Array.isArray(v)) {
+        return R.pipe(
+          flatten_form_values,
+          R.toPairs,
+          R.map(([k2, v]) => [`${k}.${k2}`, v])
+        )(v);
+      } else {
+        return [[k, v]];
+      }
+    }),
+    R.unnest,
+    R.fromPairs
+  )(values);
+}
+
 class EsjqlFilter extends Component {
   state = {
     values: []
@@ -46,7 +65,7 @@ class EsjqlForm extends Component {
     const { search } = this.props;
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        search(values);
+        search(flatten_form_values(values));
       }
     });
   }

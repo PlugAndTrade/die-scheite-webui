@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Badge, Button, Icon, List } from 'antd';
+import { Badge, Button, Icon, List } from 'antd';
 
 const levelIcons = {
   TRACE: 'info-circle',
