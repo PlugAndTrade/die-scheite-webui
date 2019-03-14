@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Form, Select } from 'antd';
+import { Button, Form, Icon, Select, Spin } from 'antd';
 import * as R from 'ramda';
 import { getValues } from './api';
 
@@ -24,30 +24,34 @@ const flatten_form_values = (values) => {
 
 class EsjqlFilter extends Component {
   state = {
-    values: []
+    values: [],
+    loading: false
   }
 
   componentDidMount() {
+    this.setState({loading: true});
     getValues(this.props.url, [this.props.property.name])
       .then(R.prop(this.props.property.name))
-      .then(values => this.setState({values}));
+      .then(values => this.setState({values}))
+      .finally(() => this.setState({loading: false}));
   }
 
   render() {
-    let { values } = this.state;
+    let { values, loading } = this.state;
     const { getFieldDecorator } = this.props.form;
     let { property } = this.props;
     let { name, type } = property;
 
     return (
       <Form.Item key={name} label={`${name} (${type})`}>
+        {loading ? (<Spin indicator={(<Icon type='loading' />)} />) : (<></>)}
         {getFieldDecorator(name, {})(
           <Select
             placeholder={name}
             mode='tags'
             style={{width: '300px'}}
           >
-            {values.filter(v => v.length > 0).map(v => (<Select.Option key={v}>{v}</Select.Option>))}
+            {values.filter(R.propSatisfies(R.complement(R.isEmpty), 'value')).map(v => (<Select.Option key={v.value}>{v.value}</Select.Option>))}
           </Select>
         )}
       </Form.Item>
