@@ -3,6 +3,7 @@ import { Layout } from 'antd';
 import Esjql from './esjql';
 import { List } from './logentries';
 import './App.css';
+import './esjql/esjql.css';
 import "antd/dist/antd.css";
 
 class App extends Component {

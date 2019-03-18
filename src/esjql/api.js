@@ -1,5 +1,9 @@
 import * as R from 'ramda';
 
+const rejectNonOkJson = response => response.ok
+  ? response.json()
+  : response.json().then(j => Promise.reject(j));
+
 const getValues = (url, props) => {
   let qs = R.pipe(
     R.map(prop => `_aggs[]=${prop}`),
@@ -7,7 +11,7 @@ const getValues = (url, props) => {
   )(props);
 
   return fetch(`${url}?${qs}&_size=0`)
-    .then(r => r.json())
+    .then(rejectNonOkJson)
     .then(R.pipe(
       R.prop('aggregations'),
       R.map(R.juxt([R.prop('property'), R.prop('values')])),
@@ -24,7 +28,8 @@ const search = (url, filters, size) => {
     R.join('&')
   )(filters);
 
-  return fetch(`${url}?${qs}&_size=${size}`).then(r => r.json());
+  return fetch(`${url}?${qs}&_size=${size}`)
+    .then(rejectNonOkJson);
 };
 
 const getProperties = (url) => fetch(`${url}/properties`)
