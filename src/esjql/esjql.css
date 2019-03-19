@@ -20,6 +20,7 @@
 }
 
 .esjql__item-menu .title {
+  display: flex;
   padding-left: 10px;
   padding-bottom: 7px;
   padding-top: 7px;
