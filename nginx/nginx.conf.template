@@ -14,8 +14,8 @@ http {
   server {
     listen 80;
 
-    location ~ "^/api/(?<apipath>.+)$" {
-      proxy_pass http://diescheite-api/$apipath;
+    location /api/ {
+      proxy_pass http://diescheite-api/;
     }
 
     location / {
