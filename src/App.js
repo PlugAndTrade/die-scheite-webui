@@ -3,6 +3,7 @@ import { Layout } from 'antd';
 import Esjql from './esjql';
 import { List } from './logentries';
 import './App.css';
+import config from './config';
 import './esjql/esjql.css';
 import "antd/dist/antd.css";
 
@@ -16,7 +17,7 @@ class App extends Component {
           </Layout.Header>
           <Layout.Content>
             <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-              <Esjql resultComponent={List} searchUrl='/logentries' />
+              <Esjql resultComponent={List} searchUrl={`${config.apiUrl}/logentries`} />
             </div>
           </Layout.Content>
         </Layout>
