@@ -1,0 +1,33 @@
+error_log /dev/stdout info;
+worker_processes  1;
+
+events {
+  worker_connections  1024;
+}
+
+http {
+  access_log /dev/stdout;
+  upstream diescheite-api {
+    server ${DIESCHEITE_API};
+  }
+
+  server {
+    listen 80;
+
+    location ~ "^/api/(?<apipath>.+)$" {
+      proxy_pass http://diescheite-api/$apipath;
+    }
+
+    location / {
+      root   /usr/share/nginx/html;
+      index  index.html index.htm;
+      try_files $uri $uri/ /index.html;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+
+    location = /50x.html {
+      root   /usr/share/nginx/html;
+    }
+  }
+}
