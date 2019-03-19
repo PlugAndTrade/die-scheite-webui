@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Badge, Button, Icon, List } from 'antd';
+import { Badge, Button, Icon, List, Modal } from 'antd';
 
 const levelIcons = {
   TRACE: 'info-circle',
@@ -21,16 +21,25 @@ const levelColors = {
 
 class LogListItem extends Component {
   state = {
-    collapsed: true
+    collapsed: true,
+    showJson: false
   }
   
   toggleCollapsed() {
     this.setState({collapsed: !this.state.collapsed});
   }
 
+  showJson() {
+    this.setState({showJson: true});
+  }
+
+  hideJson() {
+    this.setState({showJson: false});
+  }
+
   render() {
     let { item } = this.props;
-    let { collapsed } = this.state;
+    let { collapsed, showJson } = this.state;
     let level = item.levelCategory || "TRACE";
     return (
       <List.Item>
@@ -50,6 +59,19 @@ class LogListItem extends Component {
           dataSource={item.messages}
           renderItem={message => (<List.Item>{message.message}</List.Item>)} />
         )}
+        <Button
+          onClick={this.showJson.bind(this)}
+        >
+        Json <Icon type='' />
+        </Button>
+        <Modal
+          width={1040}
+          visible={showJson}
+          onOk={this.hideJson.bind(this)}
+          onCancel={this.hideJson.bind(this)}
+        >
+          <div><pre>{JSON.stringify(item, null, 2)}</pre></div>
+        </Modal>
       </List.Item>
     );
   }
