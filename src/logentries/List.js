@@ -37,6 +37,16 @@ class LogListItem extends Component {
     this.setState({showJson: false});
   }
 
+  downloadAttachment(id) {
+    fetch(`/attachments/${id}`)
+      .then(res => res.text())
+      .then(data => Modal.info({
+        icon: 'paper-clip',
+        keyboard: true,
+        content: (<pre>{data}</pre>)
+      }));
+  }
+
   render() {
     let { item } = this.props;
     let { collapsed, showJson } = this.state;
@@ -57,7 +67,7 @@ class LogListItem extends Component {
           itemLayout='horizontal'
           bordered
           dataSource={item.messages}
-          renderItem={message => (<List.Item>{message.message}</List.Item>)} />
+          renderItem={message => (<List.Item>{message.message}<span>{message.attachments.map(a => (<Button onClick={() => this.downloadAttachment(a.id)} ><Icon type="paper-clip" />{a.name}</Button>))}</span></List.Item>)} />
         )}
         <Button
           onClick={this.showJson.bind(this)}
