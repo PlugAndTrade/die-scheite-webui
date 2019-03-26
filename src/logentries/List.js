@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import React, { Component } from 'react';
 import { Badge, Button, Icon, List, Modal } from 'antd';
 
@@ -39,7 +40,11 @@ class LogListItem extends Component {
 
   downloadAttachment(id) {
     fetch(`/attachments/${id}`)
-      .then(res => res.text())
+      .then(R.cond([
+        [ R.pipe(R.prop('headers'), R.invoker(1, 'get')('Content-Type'), R.equals('application/json')), R.invoker(0, 'json') ],
+        [ R.T, () => R.invoker(0, 'text') ]
+      ]))
+      .then(R.when(R.complement(R.is(String)), d => JSON.stringify(d, null, 2)))
       .then(data => Modal.info({
         icon: 'paper-clip',
         keyboard: true,
